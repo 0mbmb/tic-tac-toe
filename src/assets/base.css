@@ -1,11 +1,24 @@
 :root {
   --white: #ffffff;
-  --black: #000000;
+  --black: #181818;
+  --lightGrey: #d9d9d9;
+  --green: #6cbb6b;
+  --blue: #748ff0;
+  --redTransparent: rgba(255, 0, 0, 0.5);
+
+  --grid-step: 4px;
 }
 
 :root {
   --color-background: var(--white);
   --color-text: var(--black);
+
+  --color-board: var(--white);
+  --color-board-border: var(--lightGrey);
+
+  --color-x: var(--blue);
+  --color-o: var(--green);
+  --color-crossline: var(--redTransparent);
 }
 
 *,
@@ -22,8 +35,9 @@ body {
   color: var(--color-text);
   background: var(--color-background);
   transition: color 0.2s, background-color 0.2s;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
