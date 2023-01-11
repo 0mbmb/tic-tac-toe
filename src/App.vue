@@ -2,8 +2,9 @@
 // import CrossLine from "./components/CrossLine.vue";
 import CrossLineSVG from "./components/CrossLineSVG.vue";
 import BoardButton from "./components/BoardButton.vue";
+import WinnerOverlay from "./components/WinnerOverlay.vue";
 
-import { Player, CrossLinePositions } from "./types";
+import { Player, CrossLinePositions, Winner } from "./types";
 
 const winningIndexes = [
   { indexes: [0, 1, 2], position: CrossLinePositions.ROW1 },
@@ -28,10 +29,12 @@ export default {
     // CrossLine,
     CrossLineSVG,
     BoardButton,
+    WinnerOverlay,
   },
   setup() {
     return {
       Player,
+      Winner,
     };
   },
   data() {
@@ -41,6 +44,7 @@ export default {
       cells: [...gameDefault.cells] as Array<string | null>,
       winner: gameDefault.winner as string | null,
       crossLinePosition: CrossLinePositions.ROW1,
+      opacity: 1,
     };
   },
   methods: {
@@ -53,10 +57,14 @@ export default {
       }
     },
     resetGame() {
-      this.playerMove = gameDefault.playerMove;
-      this.cells = [...gameDefault.cells];
-      this.move = gameDefault.move;
-      this.winner = gameDefault.winner;
+      this.opacity = 0;
+      setTimeout(() => {
+        this.opacity = 1;
+        this.playerMove = gameDefault.playerMove;
+        this.cells = [...gameDefault.cells];
+        this.move = gameDefault.move;
+        this.winner = gameDefault.winner;
+      }, 200);
     },
     determineWinner() {
       if (this.move < 4) return;
@@ -72,6 +80,10 @@ export default {
           return;
         }
       });
+
+      if (this.move === 8) {
+        this.winner = Winner.draw;
+      }
     },
   },
 };
@@ -84,19 +96,23 @@ export default {
 
   <main>
     <div class="board">
+      <WinnerOverlay v-if="!!winner" :winner="winner" @onNext="resetGame()" />
       <!-- <CrossLine v-if="!!winner" :position="crossLinePosition" /> -->
       <!-- <CrossLine :position="'row-2'" /> -->
-      <CrossLineSVG v-if="!!winner" :position="crossLinePosition" />
+      <CrossLineSVG
+        v-if="!!winner && winner !== Winner.draw"
+        :position="crossLinePosition"
+        :style="{ opacity }"
+      />
       <BoardButton
         v-for="(cell, index) in cells"
         :key="index"
         :cell="cell"
         :disabled="!!winner || cells[index] !== null"
+        :style="{ opacity }"
         @makeMove="makeMove(index)"
       />
     </div>
-    <button type="button" @click="resetGame()">Reset</button>
-    <p v-if="winner">Winner: {{ winner }}</p>
   </main>
 </template>
 
@@ -111,7 +127,6 @@ export default {
   max-width: calc(var(--grid-step) * 105);
 
   position: relative;
-  background-color: var(--color-board-border);
   border: 2px solid var(--color-board-border);
   border-radius: calc(var(--grid-step) * 5);
 

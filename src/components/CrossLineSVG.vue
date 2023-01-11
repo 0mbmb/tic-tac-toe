@@ -97,6 +97,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 200ms ease;
 
   &__icon {
     max-width: 382px;

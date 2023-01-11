@@ -53,6 +53,7 @@ export default {
   padding: calc(var(--grid-step) * 2);
   line-height: 0;
   background-color: var(--color-board);
+  transition: opacity 200ms ease;
 
   &:disabled {
     cursor: not-allowed;
@@ -80,6 +81,12 @@ export default {
 
   &--icon-o {
     color: var(--color-o);
+
+    circle {
+      stroke-dasharray: 252px;
+      stroke-dashoffset: 252px;
+      animation: anim-path 0.2s ease forwards;
+    }
   }
 }
 

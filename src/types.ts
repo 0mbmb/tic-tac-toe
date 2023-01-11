@@ -3,6 +3,12 @@ export enum Player {
   o = "o",
 }
 
+export enum Winner {
+  x = "x",
+  o = "o",
+  draw = "draw",
+}
+
 export enum CrossLinePositions {
   ROW1 = "row-1",
   ROW2 = "row-2",
