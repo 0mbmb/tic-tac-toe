@@ -14,6 +14,9 @@ export default {
     cell: {
       type: null as unknown as PropType<String | null>,
     },
+    playerMove: {
+      type: String,
+    },
     disabled: {
       type: Boolean,
     },
@@ -42,6 +45,14 @@ export default {
       v-else-if="cell === Player.o"
       class="board__icon board__icon--icon-o"
     />
+    <IconX
+      v-else-if="playerMove === Player.x"
+      class="board__icon board__icon--ghost board__icon--ghost-x"
+    />
+    <IconO
+      v-else-if="playerMove === Player.o"
+      class="board__icon board__icon--ghost board__icon--ghost-o"
+    />
   </button>
 </template>
 
@@ -57,6 +68,12 @@ export default {
 
   &:disabled {
     cursor: not-allowed;
+  }
+
+  &:hover {
+    .board__icon--ghost {
+      opacity: 0.1;
+    }
   }
 }
 
@@ -87,6 +104,19 @@ export default {
       stroke-dashoffset: 252px;
       animation: anim-path 0.2s ease forwards;
     }
+  }
+
+  &--ghost {
+    opacity: 0;
+    transition: opacity 0.1s ease;
+  }
+
+  &--ghost-x {
+    color: var(--color-x);
+  }
+
+  &--ghost-o {
+    color: var(--color-o);
   }
 }
 

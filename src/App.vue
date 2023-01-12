@@ -24,6 +24,15 @@ export default {
   display: flex;
   flex-direction: column;
 
+  background-image: linear-gradient(
+    to right bottom,
+    #748ff0,
+    #00a7f4,
+    #00b5d4,
+    #00bb9f,
+    #6cbb6b
+  );
+
   &__container {
     padding: 0 calc(var(--grid-step) * 5);
     flex-grow: 1;

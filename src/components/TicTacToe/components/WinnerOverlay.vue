@@ -50,7 +50,7 @@ export default {
 
 <template>
   <div class="overlay" :style="{ opacity }">
-    <div>
+    <div class="overlay__icon-wrapper">
       <IconX
         v-if="winner === Winner.x || winner === Winner.draw"
         class="overlay__icon"
@@ -83,29 +83,36 @@ export default {
   background-color: var(--color-bg-overlay);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
 
   color: var(--color-text-overlay);
 
+  &__icon-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
   &__icon {
-    width: 75px;
-    height: 75px;
+    width: 20%;
+    max-width: 75px;
   }
 
   &__message {
+    align-self: center;
     margin-top: calc(var(--grid-step) * 5);
-    font-size: 36px;
+    font-size: 2rem;
   }
 
   &__button {
+    align-self: center;
     margin-top: calc(var(--grid-step) * 7);
   }
 }
 
 .button {
   padding: calc(var(--grid-step) * 2) calc(var(--grid-step) * 10);
-  font-size: 18px;
+  font-size: 1.1rem;
   border-radius: 10px;
   border: none;
   cursor: pointer;

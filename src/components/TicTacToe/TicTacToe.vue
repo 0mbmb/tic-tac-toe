@@ -128,6 +128,7 @@ export default {
       v-for="(cell, index) in cells"
       :key="index"
       :cell="cell"
+      :playerMove="playerMove"
       :disabled="!!winner || cells[index] !== null"
       :style="{ opacity }"
       @makeMove="makeMove(index)"
@@ -150,6 +151,7 @@ export default {
   position: relative;
   border: 2px solid var(--color-board-border);
   border-radius: calc(var(--grid-step) * 5);
+  background-color: var(--color-bg);
 
   &::before,
   &::after {
