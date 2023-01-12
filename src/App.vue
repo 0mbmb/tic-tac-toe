@@ -1,6 +1,5 @@
 <script lang="ts">
-// import CrossLine from "./components/CrossLine.vue";
-import CrossLineSVG from "./components/CrossLineSVG.vue";
+import CrossLine from "./components/CrossLine.vue";
 import BoardButton from "./components/BoardButton.vue";
 import WinnerOverlay from "./components/WinnerOverlay.vue";
 
@@ -26,8 +25,7 @@ const gameDefault = {
 
 export default {
   components: {
-    // CrossLine,
-    CrossLineSVG,
+    CrossLine,
     BoardButton,
     WinnerOverlay,
   },
@@ -46,6 +44,12 @@ export default {
       crossLinePosition: CrossLinePositions.ROW1,
       opacity: 1,
     };
+  },
+  created() {
+    window.addEventListener("keydown", this.onKeyDown);
+  },
+  beforeUnmount() {
+    window.removeEventListener("keydown", this.onKeyDown);
   },
   methods: {
     makeMove(index: number) {
@@ -69,7 +73,7 @@ export default {
     determineWinner() {
       if (this.move < 4) return;
 
-      winningIndexes.forEach((item) => {
+      for (const item of winningIndexes) {
         if (
           this.cells[item.indexes[0]] !== null &&
           this.cells[item.indexes[0]] === this.cells[item.indexes[1]] &&
@@ -79,10 +83,31 @@ export default {
           this.winner = this.playerMove;
           return;
         }
-      });
+      }
 
-      if (this.move === 8) {
+      if (this.move === 8 && !this.winner) {
         this.winner = Winner.draw;
+      }
+    },
+    onKeyDown(e: KeyboardEvent) {
+      const controlKeyCodes = [
+        "KeyQ",
+        "KeyW",
+        "KeyE",
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "KeyZ",
+        "KeyX",
+        "KeyC",
+      ];
+      const indexOfKey = controlKeyCodes.indexOf(e?.code);
+      if (
+        indexOfKey !== -1 &&
+        this.cells[indexOfKey] === null &&
+        !this.winner
+      ) {
+        this.makeMove(indexOfKey);
       }
     },
   },
@@ -97,9 +122,7 @@ export default {
   <main>
     <div class="board">
       <WinnerOverlay v-if="!!winner" :winner="winner" @onNext="resetGame()" />
-      <!-- <CrossLine v-if="!!winner" :position="crossLinePosition" /> -->
-      <!-- <CrossLine :position="'row-2'" /> -->
-      <CrossLineSVG
+      <CrossLine
         v-if="!!winner && winner !== Winner.draw"
         :position="crossLinePosition"
         :style="{ opacity }"

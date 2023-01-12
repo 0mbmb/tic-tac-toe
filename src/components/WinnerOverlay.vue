@@ -28,8 +28,19 @@ export default {
       this.opacity = 0;
       this.$emit("onNext");
     },
+    onEscKeydown(e: KeyboardEvent) {
+      if (e.key === "Escape") this.onNext();
+    },
+  },
+  created() {
+    window.addEventListener("keydown", this.onEscKeydown);
+  },
+  beforeUnmount() {
+    window.removeEventListener("keydown", this.onEscKeydown);
   },
   mounted() {
+    const onNextButton = this.$refs.onNextButton as HTMLButtonElement;
+    if (onNextButton) onNextButton.focus();
     setTimeout(() => {
       this.opacity = 1;
     }, 200);
@@ -52,7 +63,9 @@ export default {
     <span class="overlay__message">{{
       winner === Winner.draw ? "DRAW" : "WINS"
     }}</span>
-    <button class="overlay__button button" @click="onNext">Next</button>
+    <button class="overlay__button button" @click="onNext" ref="onNextButton">
+      Next
+    </button>
   </div>
 </template>
 
