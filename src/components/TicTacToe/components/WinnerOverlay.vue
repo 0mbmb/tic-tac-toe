@@ -109,5 +109,6 @@ export default {
   border-radius: 10px;
   border: none;
   cursor: pointer;
+  font-weight: inherit;
 }
 </style>

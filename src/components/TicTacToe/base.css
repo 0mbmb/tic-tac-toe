@@ -1,0 +1,38 @@
+.tic-tac-toe {
+  --white: #ffffff;
+  --black: rgb(24, 24, 24);
+  --lightGrey: #d9d9d9;
+  --green: #6cbb6b;
+  --blue: #748ff0;
+  --redTransparent: rgba(255, 0, 0, 0.5);
+  --blackTransparent: rgba(24, 24, 24, 0.7);
+
+  --grid-step: 4px;
+}
+
+.tic-tac-toe {
+  --color-bg: var(--white);
+  --color-bg-overlay: var(--blackTransparent);
+  --color-text: var(--black);
+  --color-text-overlay: var(--white);
+
+  --color-board: var(--white);
+  --color-board-border: var(--lightGrey);
+
+  --color-x: var(--blue);
+  --color-o: var(--green);
+  --color-crossline: var(--redTransparent);
+}
+
+.tic-tac-toe {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: bold;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+}

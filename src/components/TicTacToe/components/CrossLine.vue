@@ -91,7 +91,7 @@ export default {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .cross-line {
   position: absolute;
   z-index: 2;
@@ -105,7 +105,10 @@ export default {
 
   &__icon {
     max-width: 382px;
-    animation: anim-path 0.2s ease 0.2s forwards;
+
+    path {
+      animation: anim-path 0.2s ease forwards;
+    }
 
     &--horiz {
       path {
@@ -125,7 +128,7 @@ export default {
 
 @keyframes anim-path {
   to {
-    stroke-dashoffset: 0;
+    stroke-dashoffset: 0px;
   }
 }
 </style>
