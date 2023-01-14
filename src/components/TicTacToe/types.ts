@@ -18,4 +18,5 @@ export enum CrossLinePositions {
   COL3 = "col-3",
   DIAG1 = "diag-1",
   DIAG2 = "diag-2",
+  DRAW = "draw",
 }

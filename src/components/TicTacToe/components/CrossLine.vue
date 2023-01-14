@@ -70,8 +70,14 @@ export default {
             ...diagCommon,
             transform: "rotate(90deg)",
           };
+        case CrossLinePositions.DRAW:
+          return {
+            display: "none",
+          };
         default:
-          return {};
+          return {
+            display: "none",
+          };
       }
     },
   },
