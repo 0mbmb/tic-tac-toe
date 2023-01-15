@@ -33,6 +33,15 @@ export default {
         this.game.resetGame();
       }, 200);
     },
+    onKeyDown(e: KeyboardEvent) {
+      this.game.onKeyDown(e);
+    },
+  },
+  created() {
+    window.addEventListener("keydown", this.onKeyDown);
+  },
+  beforeUnmount() {
+    window.removeEventListener("keydown", this.onKeyDown);
   },
 };
 </script>
