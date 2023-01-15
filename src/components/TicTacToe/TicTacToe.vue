@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      game: new TicTacToe(),
+      game: new TicTacToe(true),
       opacity: 1,
     };
   },
@@ -62,7 +62,7 @@ export default {
       v-for="(cell, index) in game.cells"
       :key="index"
       :cell="cell"
-      :mark="game.mark"
+      :mark="game.move.mark"
       :firstPlayer="game.firstPlayer"
       :disabled="!!game.winner || game.cells[index] !== null"
       :style="{ opacity }"
