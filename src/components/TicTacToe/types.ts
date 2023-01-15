@@ -1,12 +1,17 @@
 export enum Player {
-  x = "x",
-  o = "o",
+  ONE = "one",
+  TWO = "two",
+}
+
+export enum Mark {
+  X = "x",
+  O = "o",
 }
 
 export enum Winner {
-  x = "x",
-  o = "o",
-  draw = "draw",
+  X = "x",
+  O = "o",
+  DRAW = "draw",
 }
 
 export enum CrossLinePositions {

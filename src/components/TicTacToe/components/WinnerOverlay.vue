@@ -1,7 +1,13 @@
 <script lang="ts">
+import type { PropType } from "vue";
 import IconX from "../icons/IconX.vue";
 import IconO from "../icons/IconO.vue";
 import { Winner } from "../types";
+
+interface IWinner {
+  mark: string;
+  player: string;
+}
 
 export default {
   setup() {
@@ -10,9 +16,7 @@ export default {
     };
   },
   props: {
-    winner: {
-      type: String,
-    },
+    winner: { type: Object as PropType<IWinner>, required: true },
   },
   data() {
     return {
@@ -52,16 +56,16 @@ export default {
   <div class="overlay" :style="{ opacity }">
     <div class="overlay__icon-wrapper">
       <IconX
-        v-if="winner === Winner.x || winner === Winner.draw"
+        v-if="winner.mark === Winner.X || winner.player === Winner.DRAW"
         class="overlay__icon"
       />
       <IconO
-        v-if="winner === Winner.o || winner === Winner.draw"
+        v-if="winner.mark === Winner.O || winner.player === Winner.DRAW"
         class="overlay__icon"
       />
     </div>
     <span class="overlay__message">{{
-      winner === Winner.draw ? "DRAW" : "WINS"
+      winner.player === Winner.DRAW ? "DRAW" : "WINS"
     }}</span>
     <button class="overlay__button button" @click="onNext" ref="onNextButton">
       Next

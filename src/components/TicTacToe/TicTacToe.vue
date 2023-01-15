@@ -54,7 +54,7 @@ export default {
       @onNext="onNext()"
     />
     <CrossLine
-      v-if="!!game.winner && game.winner !== Winner.draw"
+      v-if="!!game.winner && game.winner.player !== Winner.DRAW"
       :position="game.crossLinePosition"
       :style="{ opacity }"
     />
@@ -62,7 +62,8 @@ export default {
       v-for="(cell, index) in game.cells"
       :key="index"
       :cell="cell"
-      :playerMove="game.playerMove"
+      :mark="game.mark"
+      :firstPlayer="game.firstPlayer"
       :disabled="!!game.winner || game.cells[index] !== null"
       :style="{ opacity }"
       @makeMove="game.makeMove(index)"

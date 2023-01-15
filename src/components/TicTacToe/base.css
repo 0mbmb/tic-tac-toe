@@ -19,8 +19,9 @@
   --color-board: var(--white);
   --color-board-border: var(--lightGrey);
 
-  --color-x: var(--blue);
-  --color-o: var(--green);
+  --color-one: var(--blue);
+  --color-two: var(--green);
+
   --color-crossline: var(--redTransparent);
 }
 

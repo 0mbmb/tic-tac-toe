@@ -2,19 +2,22 @@
 import IconX from "../icons/IconX.vue";
 import IconO from "../icons/IconO.vue";
 import type { PropType } from "vue";
-import { Player } from "../types";
+import { Mark, Player } from "../types";
 
 export default {
   setup() {
     return {
-      Player,
+      Mark,
     };
   },
   props: {
     cell: {
       type: null as unknown as PropType<String | null>,
     },
-    playerMove: {
+    mark: {
+      type: String,
+    },
+    firstPlayer: {
       type: String,
     },
     disabled: {
@@ -24,6 +27,18 @@ export default {
   components: {
     IconX,
     IconO,
+  },
+  computed: {
+    iconXStyle() {
+      return `color: var(--color-${
+        this.firstPlayer === Player.ONE ? "one" : "two"
+      })`;
+    },
+    iconOStyle() {
+      return `color: var(--color-${
+        this.firstPlayer === Player.ONE ? "two" : "one"
+      })`;
+    },
   },
   methods: {
     makeMove() {
@@ -40,17 +55,24 @@ export default {
     @click="makeMove"
     :disabled="disabled"
   >
-    <IconX v-if="cell === Player.x" class="board__icon board__icon--icon-x" />
+    <IconX
+      v-if="cell === Mark.X"
+      :style="iconXStyle"
+      class="board__icon board__icon--icon-x"
+    />
     <IconO
-      v-else-if="cell === Player.o"
+      v-else-if="cell === Mark.O"
+      :style="iconOStyle"
       class="board__icon board__icon--icon-o"
     />
     <IconX
-      v-else-if="playerMove === Player.x"
+      v-else-if="mark === Mark.X"
+      :style="iconXStyle"
       class="board__icon board__icon--ghost board__icon--ghost-x"
     />
     <IconO
-      v-else-if="playerMove === Player.o"
+      v-else-if="mark === Mark.O"
+      :style="iconOStyle"
       class="board__icon board__icon--ghost board__icon--ghost-o"
     />
   </button>
@@ -82,8 +104,6 @@ export default {
   max-height: 100px;
 
   &--icon-x {
-    color: var(--color-x);
-
     path {
       stroke-dasharray: 111px;
       stroke-dashoffset: 111px;
@@ -97,8 +117,6 @@ export default {
   }
 
   &--icon-o {
-    color: var(--color-o);
-
     circle {
       stroke-dasharray: 252px;
       stroke-dashoffset: 252px;
@@ -109,14 +127,6 @@ export default {
   &--ghost {
     opacity: 0;
     transition: opacity 0.1s ease;
-  }
-
-  &--ghost-x {
-    color: var(--color-x);
-  }
-
-  &--ghost-o {
-    color: var(--color-o);
   }
 }
 

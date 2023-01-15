@@ -1,10 +1,12 @@
-import { Player, CrossLinePositions, Winner } from "./types";
+import { Player, CrossLinePositions, Winner, Mark } from "./types";
 
 const gameDefault = {
-  move: 0,
-  playerMove: Player.x,
   cells: [null, null, null, null, null, null, null, null, null],
   winner: null,
+  move: 0,
+  firstMark: Mark.X,
+  firstPlayer: Player.ONE,
+  crossLinePosition: CrossLinePositions.DRAW,
 };
 
 const winningIndexes = [
@@ -32,17 +34,19 @@ const controlKeyCodes = [
 
 export default class TicTacToe {
   cells: Array<string | null>;
-  winner: string | null;
+  winner: { mark: string; player: string } | null;
   move: number;
-  playerMove: string;
+  mark: string;
+  firstPlayer: string;
   crossLinePosition: string;
 
   constructor() {
     this.cells = [...gameDefault.cells];
     this.winner = gameDefault.winner;
     this.move = gameDefault.move;
-    this.playerMove = gameDefault.playerMove;
-    this.crossLinePosition = CrossLinePositions.DRAW;
+    this.mark = gameDefault.firstMark;
+    this.firstPlayer = gameDefault.firstPlayer;
+    this.crossLinePosition = gameDefault.crossLinePosition;
   }
 
   determineWinner() {
@@ -55,22 +59,28 @@ export default class TicTacToe {
         this.cells[item.indexes[0]] === this.cells[item.indexes[2]]
       ) {
         this.crossLinePosition = item.position;
-        this.winner = this.playerMove;
+        this.winner = {
+          mark: this.mark,
+          player:
+            this.mark === gameDefault.firstMark
+              ? this.firstPlayer
+              : this.otherPlayer(this.firstPlayer),
+        };
         return;
       }
     }
 
     if (this.move === 8 && !this.winner) {
       this.crossLinePosition = CrossLinePositions.DRAW;
-      this.winner = Winner.draw;
+      this.winner = { mark: Winner.DRAW, player: Winner.DRAW };
     }
   }
 
   makeMove(index: number) {
-    this.cells[index] = this.playerMove;
+    this.cells[index] = this.mark;
     this.determineWinner();
     if (!this.winner) {
-      this.playerMove = this.playerMove === Player.x ? Player.o : Player.x;
+      this.mark = this.otherMark(this.mark);
       ++this.move;
     }
   }
@@ -83,9 +93,18 @@ export default class TicTacToe {
   }
 
   resetGame() {
-    this.playerMove = gameDefault.playerMove;
     this.cells = [...gameDefault.cells];
-    this.move = gameDefault.move;
     this.winner = gameDefault.winner;
+    this.move = gameDefault.move;
+    this.mark = gameDefault.firstMark;
+    this.firstPlayer = this.otherPlayer(this.firstPlayer);
+  }
+
+  otherPlayer(player: string) {
+    return player === Player.ONE ? Player.TWO : Player.ONE;
+  }
+
+  otherMark(mark: string) {
+    return mark === Mark.X ? Mark.O : Mark.X;
   }
 }
