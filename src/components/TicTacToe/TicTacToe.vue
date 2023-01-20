@@ -3,6 +3,7 @@ import CrossLine from "./components/CrossLine.vue";
 import BoardButton from "./components/BoardButton.vue";
 import WinnerOverlay from "./components/WinnerOverlay.vue";
 import TicTacToe from "./core";
+import VSwitcher from "./components/VSwitcher.vue";
 
 import "./base.css";
 
@@ -13,6 +14,7 @@ export default {
     CrossLine,
     BoardButton,
     WinnerOverlay,
+    VSwitcher,
   },
   setup() {
     return {
@@ -23,7 +25,15 @@ export default {
     return {
       game: new TicTacToe(true, Difficulty.HARD),
       opacity: 1,
+      isSecondPlayerAI: true,
+      difficulty: Difficulty.HARD,
     };
+  },
+  watch: {
+    isSecondPlayerAI() {
+      this.game = new TicTacToe(this.isSecondPlayerAI, this.difficulty);
+      this.game.resetGame();
+    },
   },
   methods: {
     onNext() {
@@ -48,39 +58,65 @@ export default {
 
 <template>
   <div class="tic-tac-toe">
-    <WinnerOverlay
-      v-if="!!game.winner"
-      :winner="game.winner"
-      @onNext="onNext()"
-    />
-    <CrossLine
-      v-if="!!game.winner && game.winner.player !== Winner.DRAW"
-      :position="game.crossLinePosition"
-      :style="{ opacity }"
-    />
-    <BoardButton
-      v-for="(cell, index) in game.cells"
-      :key="index"
-      :cell="cell"
-      :mark="game.move.mark"
-      :firstPlayer="game.firstPlayer"
-      :disabled="!!game.winner || game.cells[index] !== null"
-      :style="{ opacity }"
-      @makeMove="game.makeMove(index)"
-    />
+    <div class="tic-tac-toe__board board">
+      <WinnerOverlay
+        v-if="!!game.winner"
+        :winner="game.winner"
+        @onNext="onNext()"
+      />
+      <CrossLine
+        v-if="!!game.winner && game.winner.player !== Winner.DRAW"
+        :position="game.crossLinePosition"
+        :style="{ opacity }"
+      />
+      <BoardButton
+        v-for="(cell, index) in game.cells"
+        :key="index"
+        :cell="cell"
+        :mark="game.move.mark"
+        :firstPlayer="game.firstPlayer"
+        :disabled="!!game.winner || game.cells[index] !== null"
+        :style="{ opacity }"
+        @makeMove="game.makeMove(index)"
+      />
+    </div>
+    <div class="tic-tac-toe__settings settings">
+      <h3 class="settings__heading">Play with:</h3>
+      <div class="settings__player">
+        <span>Human</span>
+        <span class="settings__switcher"
+          ><VSwitcher v-model="isSecondPlayerAI"
+        /></span>
+        <span>AI</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .tic-tac-toe {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+  }
+}
+
+.board {
+  flex-grow: 1;
+  width: 100%;
+
   box-sizing: content-box;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   overflow: hidden;
 
-  width: 100%;
-  height: 100%;
   max-width: calc(var(--grid-step) * 105);
 
   position: relative;
@@ -115,6 +151,39 @@ export default {
 
     border-left-style: solid;
     border-right-style: solid;
+  }
+}
+.tic-tac-toe__settings {
+  justify-self: start;
+  margin-top: calc(var(--grid-step) * 5);
+  flex-grow: 1;
+  max-width: calc(var(--grid-step) * 105 + 4px);
+  width: 100%;
+
+  @media (min-width: 768px) {
+    max-width: calc(var(--grid-step) * 50);
+    margin-top: 0;
+    margin-left: calc(var(--grid-step) * 5);
+  }
+}
+
+.settings {
+  border: 2px solid var(--color-board-border);
+  border-radius: calc(var(--grid-step) * 5);
+  background-color: var(--color-bg);
+  padding: calc(var(--grid-step) * 5);
+
+  &__player {
+    display: flex;
+    align-items: center;
+  }
+
+  &__switcher {
+    margin: 0 calc(var(--grid-step) * 2);
+  }
+
+  &__heading {
+    margin-bottom: calc(var(--grid-step) * 2);
   }
 }
 </style>

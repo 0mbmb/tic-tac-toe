@@ -1,6 +1,6 @@
 .tic-tac-toe {
   --white: #ffffff;
-  --black: rgb(24, 24, 24);
+  --black: rgb(34, 34, 34);
   --lightGrey: #d9d9d9;
   --green: #6cbb6b;
   --blue: #748ff0;
@@ -28,7 +28,8 @@
 .tic-tac-toe {
   font-family: Helvetica, Arial, sans-serif;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
+  color: var(--color-text);
 }
 
 *,

@@ -216,13 +216,16 @@ export default class TicTacToe {
         this.cornerMarks.includes(Mark.O)
       ) {
         this.makeMoveCenter();
+        return;
       } else {
         // If first move was side
         if (getRandomNumber(0, 1)) {
           this.makeMoveCenter();
+          return;
         } else {
           // TODO: replace with make move to adjacent corner
           this.makeMoveCenter();
+          return;
         }
       }
     }
