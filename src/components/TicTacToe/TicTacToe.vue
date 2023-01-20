@@ -6,7 +6,7 @@ import TicTacToe from "./core";
 
 import "./base.css";
 
-import { Winner } from "./types";
+import { Winner, Difficulty } from "./types";
 
 export default {
   components: {
@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      game: new TicTacToe(true),
+      game: new TicTacToe(true, Difficulty.HARD),
       opacity: 1,
     };
   },

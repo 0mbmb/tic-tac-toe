@@ -1,10 +1,10 @@
-import { Player, CrossLinePositions, Winner, Mark } from "./types";
+import { Player, CrossLinePositions, Winner, Mark, Difficulty } from "./types";
 import { getRandomNumber, getRandomFromEnum } from "./utils/utils";
 
 const gameDefault = {
   cells: [null, null, null, null, null, null, null, null, null],
   winner: null,
-  firstMove: 0,
+  firstMove: 1,
   firstMark: Mark.X,
   crossLinePosition: CrossLinePositions.DRAW,
 };
@@ -19,6 +19,12 @@ const winningIndexes = [
   { indexes: [0, 4, 8], position: CrossLinePositions.DIAG1 },
   { indexes: [2, 4, 6], position: CrossLinePositions.DIAG2 },
 ];
+
+const indexes = {
+  center: 4,
+  corners: [0, 2, 6, 8],
+  sides: [1, 3, 5, 7],
+};
 
 const controlKeyCodes = [
   "KeyQ",
@@ -38,9 +44,10 @@ export default class TicTacToe {
   move: { number: number; mark: string; player: string };
   firstPlayer: string;
   crossLinePosition: string;
-  isSecondPlayerAI: boolean;
+  readonly isSecondPlayerAI: boolean;
+  readonly difficulty: string;
 
-  constructor(isSecondPlayerAI = false) {
+  constructor(isSecondPlayerAI = false, difficulty = Difficulty.RANDOM) {
     const firstPlayer = getRandomFromEnum(Player);
 
     this.cells = [...gameDefault.cells];
@@ -53,6 +60,7 @@ export default class TicTacToe {
     this.firstPlayer = firstPlayer;
     this.crossLinePosition = gameDefault.crossLinePosition;
     this.isSecondPlayerAI = isSecondPlayerAI;
+    this.difficulty = difficulty;
 
     if (this.isSecondPlayerAI && this.move.player === Player.TWO) {
       this.makeMoveAI();
@@ -65,8 +73,33 @@ export default class TicTacToe {
     }, [] as number[]);
   }
 
+  get isLastMove() {
+    if (this.move.number === 9) {
+      return true;
+    }
+  }
+
+  get isFirst4Moves() {
+    return this.move.number < 5;
+  }
+
+  get cornerMarks() {
+    return this.getCellsByIndexes(indexes.corners);
+  }
+
+  get sideMarks() {
+    return this.getCellsByIndexes(indexes.sides);
+  }
+
+  getCellsByIndexes(indexes: number[]) {
+    return indexes.reduce(
+      (acc, cur) => [...acc, this.cells[cur]],
+      [] as Array<string | null>
+    );
+  }
+
   determineWinner() {
-    if (this.move.number < 4) return;
+    if (this.move.number < 5) return;
 
     for (const item of winningIndexes) {
       if (
@@ -83,9 +116,29 @@ export default class TicTacToe {
       }
     }
 
-    if (this.move.number === 8 && !this.winner) {
+    if (this.move.number === 9 && !this.winner) {
       this.crossLinePosition = CrossLinePositions.DRAW;
       this.winner = { mark: Winner.DRAW, player: Winner.DRAW };
+    }
+  }
+
+  isPositionWon(cellsToTest: Array<string | null>) {
+    const cells = cellsToTest || this.cells;
+
+    // if (this.move.number < 5) return false;
+
+    for (const item of winningIndexes) {
+      if (
+        cells[item.indexes[0]] !== null &&
+        cells[item.indexes[0]] === cells[item.indexes[1]] &&
+        cells[item.indexes[0]] === cells[item.indexes[2]]
+      ) {
+        return true;
+      }
+    }
+
+    if (this.isLastMove) {
+      return false;
     }
   }
 
@@ -125,6 +178,122 @@ export default class TicTacToe {
     }
   }
 
+  makeMoveAI() {
+    if (this.difficulty === Difficulty.HARD) {
+      this.makeHardMoveAI();
+      return;
+    }
+
+    if (this.difficulty === Difficulty.RANDOM) {
+      this.makeRandomMoveAI();
+      return;
+    }
+  }
+
+  makeHardMoveAI() {
+    // First move
+    if (this.move.number === 1) {
+      if (getRandomNumber(0, 1)) {
+        this.makeMoveRandomCorner();
+        return;
+      } else {
+        this.makeMoveCenter();
+        return;
+      }
+    }
+
+    // Second move
+    if (this.move.number === 2) {
+      // If first move was center
+      if (this.cells[indexes.center] !== null) {
+        this.makeMoveRandomCorner();
+        return;
+      }
+
+      if (
+        // If first move was corner
+        this.cornerMarks.includes(Mark.X) ||
+        this.cornerMarks.includes(Mark.O)
+      ) {
+        this.makeMoveCenter();
+      } else {
+        // If first move was side
+        if (getRandomNumber(0, 1)) {
+          this.makeMoveCenter();
+        } else {
+          // TODO: replace with make move to adjacent corner
+          this.makeMoveCenter();
+        }
+      }
+    }
+
+    // Last move
+    if (this.isLastMove) {
+      this.makeRandomMoveAI();
+      return;
+    }
+
+    const isWinnable = this.isWinnable();
+    if (isWinnable !== undefined) {
+      this.makeMove(isWinnable);
+      return;
+    }
+
+    const isLosable = this.isLosable();
+    if (isLosable !== undefined) {
+      this.makeMove(isLosable);
+      return;
+    }
+
+    this.makeRandomMoveAI();
+    return;
+  }
+
+  makeRandomMoveAI() {
+    const randomIndex = getRandomNumber(0, this.emptyCellIndexes.length - 1);
+    this.makeMove(this.emptyCellIndexes[randomIndex]);
+  }
+
+  makeMoveCenter() {
+    this.makeMove(indexes.center);
+  }
+
+  makeMoveRandomCorner() {
+    const emptyCorners = this.emptyCellIndexes.filter((index) =>
+      indexes.corners.includes(index)
+    );
+    const randomCornerIndex = getRandomNumber(0, emptyCorners.length - 1);
+    this.makeMove(emptyCorners[randomCornerIndex]);
+  }
+
+  isWinnable() {
+    const cellsToTest = this.emptyCellIndexes.map((index) => {
+      const cellsCurr = [...this.cells];
+      cellsCurr[index] = this.move.mark;
+      return cellsCurr;
+    });
+
+    for (const [index, cells] of cellsToTest.entries()) {
+      if (this.isPositionWon(cells)) {
+        return this.emptyCellIndexes[index];
+      }
+    }
+  }
+
+  isLosable() {
+    const cellsToTest = this.emptyCellIndexes.map((index) => {
+      const cellsCurr = [...this.cells];
+      cellsCurr[index] = this.otherMark(this.move.mark);
+      return cellsCurr;
+    });
+
+    for (const [index, cells] of cellsToTest.entries()) {
+      if (this.isPositionWon(cells)) {
+        return this.emptyCellIndexes[index];
+      }
+    }
+  }
+
   // TODO: Вынести в utils
   otherPlayer(player: string) {
     return player === Player.ONE ? Player.TWO : Player.ONE;
@@ -132,10 +301,5 @@ export default class TicTacToe {
 
   otherMark(mark: string) {
     return mark === Mark.X ? Mark.O : Mark.X;
-  }
-
-  makeMoveAI() {
-    const randomIndex = getRandomNumber(0, this.emptyCellIndexes.length - 1);
-    this.makeMove(this.emptyCellIndexes[randomIndex]);
   }
 }

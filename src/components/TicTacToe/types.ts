@@ -25,3 +25,8 @@ export enum CrossLinePositions {
   DIAG2 = "diag-2",
   DRAW = "draw",
 }
+
+export enum Difficulty {
+  HARD = "hard",
+  RANDOM = "random",
+}
