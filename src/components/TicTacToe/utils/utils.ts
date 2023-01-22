@@ -13,3 +13,7 @@ export const getRandomFromEnum = <T extends { [key: number]: string | number }>(
     ? enm[randomKey as keyof T]
     : (randomKeyNumber as unknown as T[keyof T]);
 };
+
+export const toFirstLetterUpperCase = (str: string) => {
+  return `${str[0].toUpperCase()}${str.substring(1)}`;
+};

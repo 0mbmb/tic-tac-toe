@@ -4,6 +4,9 @@ import BoardButton from "./components/BoardButton.vue";
 import WinnerOverlay from "./components/WinnerOverlay.vue";
 import TicTacToe from "./core";
 import VSwitcher from "./components/VSwitcher.vue";
+import VRadio from "./components/VRadio.vue";
+
+import { toFirstLetterUpperCase } from "./utils/utils";
 
 import "./base.css";
 
@@ -15,10 +18,12 @@ export default {
     BoardButton,
     WinnerOverlay,
     VSwitcher,
+    VRadio,
   },
   setup() {
     return {
       Winner,
+      Difficulty,
     };
   },
   data() {
@@ -30,9 +35,22 @@ export default {
     };
   },
   watch: {
-    isSecondPlayerAI() {
-      this.game = new TicTacToe(this.isSecondPlayerAI, this.difficulty);
-      this.game.resetGame();
+    isSecondPlayerAI(newVal: boolean) {
+      // TODO: DRY
+      this.opacity = 0;
+      setTimeout(() => {
+        this.opacity = 1;
+        this.game = new TicTacToe(newVal, this.difficulty);
+        this.game.resetGame();
+      }, 200);
+    },
+    difficulty(newVal: Difficulty) {
+      this.opacity = 0;
+      setTimeout(() => {
+        this.opacity = 1;
+        this.game = new TicTacToe(this.isSecondPlayerAI, newVal);
+        this.game.resetGame();
+      }, 200);
     },
   },
   methods: {
@@ -45,6 +63,16 @@ export default {
     },
     onKeyDown(e: KeyboardEvent) {
       this.game.onKeyDown(e);
+    },
+    // TODO: mixin?
+    toFirstLetterUpperCase,
+  },
+  computed: {
+    difficultyHeight() {
+      const difficultyRef = this.$refs.difficulty as HTMLDivElement;
+      return this.isSecondPlayerAI
+        ? `${difficultyRef?.scrollHeight}px` || "0px"
+        : "0px";
     },
   },
   created() {
@@ -81,13 +109,34 @@ export default {
       />
     </div>
     <div class="tic-tac-toe__settings settings">
-      <h3 class="settings__heading">Play with:</h3>
-      <div class="settings__player">
-        <span>Human</span>
-        <span class="settings__switcher"
-          ><VSwitcher v-model="isSecondPlayerAI"
-        /></span>
-        <span>AI</span>
+      <div class="settings__section">
+        <h3 class="settings__heading">Play with:</h3>
+        <div class="settings__player">
+          <!-- TODO: Human / AI = button -->
+          <span>Human</span>
+          <span class="settings__switcher"
+            ><VSwitcher v-model="isSecondPlayerAI"
+          /></span>
+          <span>AI</span>
+        </div>
+      </div>
+      <div
+        class="settings__section"
+        ref="difficulty"
+        :style="{
+          height: difficultyHeight,
+        }"
+      >
+        <h3 class="settings__heading">Difficulty:</h3>
+        <div v-for="diff in Difficulty" :key="diff">
+          <VRadio
+            :id="diff"
+            :value="diff"
+            :label="toFirstLetterUpperCase(diff)"
+            name="difficulty"
+            v-model="difficulty"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -173,6 +222,16 @@ export default {
   background-color: var(--color-bg);
   padding: calc(var(--grid-step) * 5);
 
+  &__section {
+    margin-bottom: calc(var(--grid-step) * 5);
+    overflow: hidden;
+    transition: height 100ms linear;
+  }
+
+  &__heading {
+    margin-bottom: calc(var(--grid-step) * 2);
+  }
+
   &__player {
     display: flex;
     align-items: center;
@@ -180,10 +239,6 @@ export default {
 
   &__switcher {
     margin: 0 calc(var(--grid-step) * 2);
-  }
-
-  &__heading {
-    margin-bottom: calc(var(--grid-step) * 2);
   }
 }
 </style>
