@@ -36,36 +36,36 @@ export default {
   },
   watch: {
     isSecondPlayerAI(newVal: boolean) {
-      // TODO: DRY
-      this.opacity = 0;
-      setTimeout(() => {
-        this.opacity = 1;
+      this.gradualCallback(() => {
         this.game = new TicTacToe(newVal, this.difficulty);
         this.game.resetGame();
-      }, 200);
+      });
     },
     difficulty(newVal: Difficulty) {
-      this.opacity = 0;
-      setTimeout(() => {
-        this.opacity = 1;
+      this.gradualCallback(() => {
         this.game = new TicTacToe(this.isSecondPlayerAI, newVal);
         this.game.resetGame();
-      }, 200);
+      });
     },
   },
   methods: {
     onNext() {
-      this.opacity = 0;
-      setTimeout(() => {
-        this.opacity = 1;
+      this.gradualCallback(() => {
         this.game.resetGame();
-      }, 200);
+      });
     },
     onKeyDown(e: KeyboardEvent) {
       this.game.onKeyDown(e);
     },
     // TODO: mixin?
     toFirstLetterUpperCase,
+    gradualCallback(cb: () => void) {
+      this.opacity = 0;
+      setTimeout(() => {
+        this.opacity = 1;
+        cb();
+      }, 200);
+    },
   },
   computed: {
     difficultyHeight() {
