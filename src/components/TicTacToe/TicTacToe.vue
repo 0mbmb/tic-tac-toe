@@ -10,7 +10,7 @@ import { toFirstLetterUpperCase } from "./utils/utils";
 
 import "./base.css";
 
-import { Winner, Difficulty } from "./types";
+import { Winner, Difficulty, Player } from "./types";
 
 export default {
   components: {
@@ -24,6 +24,7 @@ export default {
     return {
       Winner,
       Difficulty,
+      Player,
     };
   },
   data() {
@@ -74,6 +75,12 @@ export default {
         ? `${difficultyRef?.scrollHeight}px` || "0px"
         : "0px";
     },
+    nextPlayerIndex() {
+      if (this.isSecondPlayerAI) {
+        return "";
+      }
+      return this.game.move.player === Player.ONE ? "1" : "2";
+    },
   },
   created() {
     window.addEventListener("keydown", this.onKeyDown);
@@ -110,15 +117,22 @@ export default {
     </div>
     <div class="tic-tac-toe__settings settings">
       <div class="settings__section">
+        <h3 class="settings__heading">Next:</h3>
+        <p
+          :style="{
+            color: `var(--color-${game.move.player})`,
+          }"
+        >
+          Player {{ nextPlayerIndex }} ({{ game.move.mark.toUpperCase() }})
+        </p>
+      </div>
+      <div class="settings__section">
         <h3 class="settings__heading">Play with:</h3>
-        <div class="settings__player">
-          <!-- TODO: Human / AI = button -->
-          <span>Human</span>
-          <span class="settings__switcher"
-            ><VSwitcher v-model="isSecondPlayerAI"
-          /></span>
-          <span>AI</span>
-        </div>
+        <VSwitcher
+          v-model="isSecondPlayerAI"
+          labelLeft="Human"
+          labelRight="AI"
+        />
       </div>
       <div
         class="settings__section"
@@ -169,7 +183,6 @@ export default {
   max-width: calc(var(--grid-step) * 105);
 
   position: relative;
-  border: 2px solid var(--color-board-border);
   border-radius: calc(var(--grid-step) * 5);
   background-color: var(--color-bg);
 
@@ -217,28 +230,21 @@ export default {
 }
 
 .settings {
-  border: 2px solid var(--color-board-border);
   border-radius: calc(var(--grid-step) * 5);
   background-color: var(--color-bg);
   padding: calc(var(--grid-step) * 5);
 
   &__section {
-    margin-bottom: calc(var(--grid-step) * 5);
     overflow: hidden;
     transition: height 100ms linear;
+
+    &:not(:last-child) {
+      margin-bottom: calc(var(--grid-step) * 5);
+    }
   }
 
   &__heading {
     margin-bottom: calc(var(--grid-step) * 2);
-  }
-
-  &__player {
-    display: flex;
-    align-items: center;
-  }
-
-  &__switcher {
-    margin: 0 calc(var(--grid-step) * 2);
   }
 }
 </style>

@@ -45,6 +45,12 @@ export default {
 .radio {
   padding: var(--grid-step) 0;
 
+  transition: opacity ease 150ms;
+
+  &:hover {
+    opacity: 0.6;
+  }
+
   &__input {
     display: none;
 
