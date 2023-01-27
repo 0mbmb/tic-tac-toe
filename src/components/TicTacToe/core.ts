@@ -297,7 +297,6 @@ export default class TicTacToe {
     }
   }
 
-  // TODO: Вынести в utils
   otherPlayer(player: string) {
     return player === Player.ONE ? Player.TWO : Player.ONE;
   }

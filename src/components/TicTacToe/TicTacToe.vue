@@ -58,7 +58,6 @@ export default {
     onKeyDown(e: KeyboardEvent) {
       this.game.onKeyDown(e);
     },
-    // TODO: mixin?
     toFirstLetterUpperCase,
     gradualCallback(cb: () => void) {
       this.opacity = 0;
