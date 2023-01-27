@@ -4,13 +4,6 @@ export default {
     modelValue: {
       type: Boolean,
     },
-    // TODO: slot?
-    labelLeft: {
-      type: String,
-    },
-    labelRight: {
-      type: String,
-    },
   },
   emits: ["update:modelValue"],
   methods: {
@@ -29,13 +22,8 @@ export default {
 
 <template>
   <div class="switcher">
-    <button
-      v-if="labelLeft"
-      class="switcher__button"
-      type="button"
-      @click="onLeftClick"
-    >
-      {{ labelLeft }}
+    <button class="switcher__button" type="button" @click="onLeftClick">
+      <slot name="buttonLeft"></slot>
     </button>
     <div class="switcher__toggle">
       <input
@@ -47,13 +35,8 @@ export default {
       />
       <label class="switcher__label" for="switcher"></label>
     </div>
-    <button
-      v-if="labelRight"
-      class="switcher__button"
-      type="button"
-      @click="onRightClick"
-    >
-      {{ labelRight }}
+    <button class="switcher__button" type="button" @click="onRightClick">
+      <slot name="buttonRight"></slot>
     </button>
   </div>
 </template>

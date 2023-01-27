@@ -128,11 +128,10 @@ export default {
       </div>
       <div class="settings__section">
         <h3 class="settings__heading">Play with:</h3>
-        <VSwitcher
-          v-model="isSecondPlayerAI"
-          labelLeft="Human"
-          labelRight="AI"
-        />
+        <VSwitcher v-model="isSecondPlayerAI">
+          <template #buttonLeft>Human</template>
+          <template #buttonRight>AI</template>
+        </VSwitcher>
       </div>
       <div
         class="settings__section"
