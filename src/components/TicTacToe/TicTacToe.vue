@@ -37,21 +37,19 @@ export default {
   },
   watch: {
     isSecondPlayerAI(newVal: boolean) {
-      this.gradualCallback(() => {
+      this.onFadeout(() => {
         this.game = new TicTacToe(newVal, this.difficulty);
-        this.game.resetGame();
       });
     },
     difficulty(newVal: Difficulty) {
-      this.gradualCallback(() => {
+      this.onFadeout(() => {
         this.game = new TicTacToe(this.isSecondPlayerAI, newVal);
-        this.game.resetGame();
       });
     },
   },
   methods: {
     onNext() {
-      this.gradualCallback(() => {
+      this.onFadeout(() => {
         this.game.resetGame();
       });
     },
@@ -59,11 +57,11 @@ export default {
       this.game.onKeyDown(e);
     },
     toFirstLetterUpperCase,
-    gradualCallback(cb: () => void) {
+    onFadeout(cb?: () => void) {
       this.opacity = 0;
       setTimeout(() => {
         this.opacity = 1;
-        cb();
+        if (cb) cb();
       }, 200);
     },
   },
@@ -120,6 +118,7 @@ export default {
         <p
           :style="{
             color: `var(--color-${game.move.player})`,
+            opacity: !game.winner ? opacity : 0,
           }"
         >
           Player {{ nextPlayerIndex }} ({{ game.move.mark.toUpperCase() }})
