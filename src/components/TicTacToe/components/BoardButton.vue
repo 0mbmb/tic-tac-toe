@@ -23,6 +23,10 @@ export default {
     disabled: {
       type: Boolean,
     },
+    isAIMove: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     IconX,
@@ -66,12 +70,12 @@ export default {
       class="board__icon board__icon--icon-o"
     />
     <IconX
-      v-else-if="mark === Mark.X"
+      v-else-if="mark === Mark.X && !isAIMove"
       :style="iconXStyle"
       class="board__icon board__icon--ghost board__icon--ghost-x"
     />
     <IconO
-      v-else-if="mark === Mark.O"
+      v-else-if="mark === Mark.O && !isAIMove"
       :style="iconOStyle"
       class="board__icon board__icon--ghost board__icon--ghost-o"
     />

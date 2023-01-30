@@ -44,10 +44,16 @@ export default class TicTacToe {
   move: { number: number; mark: string; player: string };
   firstPlayer: string;
   crossLinePosition: string;
+  isAIMove: boolean;
   readonly isSecondPlayerAI: boolean;
   readonly difficulty: string;
+  readonly AIMoveDelay: number;
 
-  constructor(isSecondPlayerAI = false, difficulty = Difficulty.RANDOM) {
+  constructor({
+    isSecondPlayerAI = false,
+    difficulty = Difficulty.RANDOM,
+    AIMoveDelay = 0,
+  }) {
     const firstPlayer = getRandomFromEnum(Player);
 
     this.cells = [...gameDefault.cells];
@@ -61,6 +67,8 @@ export default class TicTacToe {
     this.crossLinePosition = gameDefault.crossLinePosition;
     this.isSecondPlayerAI = isSecondPlayerAI;
     this.difficulty = difficulty;
+    this.AIMoveDelay = AIMoveDelay;
+    this.isAIMove = false;
 
     if (this.isSecondPlayerAI && this.move.player === Player.TWO) {
       this.makeMoveAI();
@@ -125,8 +133,6 @@ export default class TicTacToe {
   isPositionWon(cellsToTest: Array<string | null>) {
     const cells = cellsToTest || this.cells;
 
-    // if (this.move.number < 5) return false;
-
     for (const item of winningIndexes) {
       if (
         cells[item.indexes[0]] !== null &&
@@ -151,7 +157,14 @@ export default class TicTacToe {
       ++this.move.number;
 
       if (this.isSecondPlayerAI && this.move.player === Player.TWO) {
-        this.makeMoveAI();
+        this.isAIMove = true;
+        setTimeout(
+          () => {
+            this.isAIMove = false;
+            this.makeMoveAI();
+          },
+          Number.isInteger(this.AIMoveDelay) ? this.AIMoveDelay : 0
+        );
       }
     }
   }
@@ -183,7 +196,6 @@ export default class TicTacToe {
       this.makeHardMoveAI();
       return;
     }
-
     if (this.difficulty === Difficulty.RANDOM) {
       this.makeRandomMoveAI();
       return;

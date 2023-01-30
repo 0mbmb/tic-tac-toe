@@ -12,6 +12,8 @@ import "./base.css";
 
 import { Winner, Difficulty, Player } from "./types";
 
+const AI_MOVE_DELAY_MS = 200;
+
 export default {
   components: {
     CrossLine,
@@ -29,21 +31,34 @@ export default {
   },
   data() {
     return {
-      game: new TicTacToe(true, Difficulty.HARD),
+      game: new TicTacToe({
+        isSecondPlayerAI: true,
+        difficulty: Difficulty.HARD,
+        AIMoveDelay: AI_MOVE_DELAY_MS,
+      }),
       opacity: 1,
       isSecondPlayerAI: true,
       difficulty: Difficulty.HARD,
+      AIMoveDelay: AI_MOVE_DELAY_MS,
     };
   },
   watch: {
     isSecondPlayerAI(newVal: boolean) {
       this.onFadeout(() => {
-        this.game = new TicTacToe(newVal, this.difficulty);
+        this.game = new TicTacToe({
+          isSecondPlayerAI: newVal,
+          difficulty: this.difficulty,
+          AIMoveDelay: AI_MOVE_DELAY_MS,
+        });
       });
     },
     difficulty(newVal: Difficulty) {
       this.onFadeout(() => {
-        this.game = new TicTacToe(this.isSecondPlayerAI, newVal);
+        this.game = new TicTacToe({
+          isSecondPlayerAI: this.isSecondPlayerAI,
+          difficulty: newVal,
+          AIMoveDelay: AI_MOVE_DELAY_MS,
+        });
       });
     },
   },
@@ -107,8 +122,9 @@ export default {
         :cell="cell"
         :mark="game.move.mark"
         :firstPlayer="game.firstPlayer"
-        :disabled="!!game.winner || game.cells[index] !== null"
+        :disabled="game.isAIMove || !!game.winner || game.cells[index] !== null"
         :style="{ opacity }"
+        :isAIMove="game.isAIMove"
         @makeMove="game.makeMove(index)"
       />
     </div>
