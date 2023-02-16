@@ -87,11 +87,15 @@ export default {
         ? `${difficultyRef?.scrollHeight}px` || "0px"
         : "0px";
     },
-    nextPlayerIndex() {
+    nextText() {
       if (this.isSecondPlayerAI) {
-        return "";
+        return this.game.move.player === Player.ONE
+          ? `Player (${this.game.move.mark.toUpperCase()})`
+          : `Computer (${this.game.move.mark.toUpperCase()})`;
       }
-      return this.game.move.player === Player.ONE ? "1" : "2";
+      return this.game.move.player === Player.ONE
+        ? `Player 1 (${this.game.move.mark.toUpperCase()})`
+        : `Player 2 (${this.game.move.mark.toUpperCase()})`;
     },
   },
   created() {
@@ -137,7 +141,7 @@ export default {
             opacity: !game.winner ? opacity : 0,
           }"
         >
-          Player {{ nextPlayerIndex }} ({{ game.move.mark.toUpperCase() }})
+          {{ nextText }}
         </p>
       </div>
       <div class="settings__section">
