@@ -2,9 +2,13 @@
 import CrossLine from "./components/CrossLine.vue";
 import BoardButton from "./components/BoardButton.vue";
 import WinnerOverlay from "./components/WinnerOverlay.vue";
+import VOverlay from "./components/VOverlay.vue";
+import VButton from "./components/VButton.vue";
 import TicTacToe from "./core";
 import VSwitcher from "./components/VSwitcher.vue";
 import VRadio from "./components/VRadio.vue";
+import IconX from "./icons/IconX.vue";
+import IconO from "./icons/IconO.vue";
 
 import { toFirstLetterUpperCase } from "./utils/utils";
 
@@ -21,6 +25,10 @@ export default {
     WinnerOverlay,
     VSwitcher,
     VRadio,
+    VOverlay,
+    VButton,
+    IconX,
+    IconO,
   },
   setup() {
     return {
@@ -32,7 +40,7 @@ export default {
   data() {
     return {
       game: new TicTacToe({
-        isSecondPlayerAI: true,
+        isSecondPlayerAI: false,
         difficulty: Difficulty.HARD,
         AIMoveDelay: AI_MOVE_DELAY_MS,
       }),
@@ -40,6 +48,7 @@ export default {
       isSecondPlayerAI: true,
       difficulty: Difficulty.HARD,
       AIMoveDelay: AI_MOVE_DELAY_MS,
+      isInitialized: false,
     };
   },
   watch: {
@@ -63,6 +72,15 @@ export default {
     },
   },
   methods: {
+    onInit(isSecondPlayerAI: boolean) {
+      this.isSecondPlayerAI = isSecondPlayerAI;
+      this.game = new TicTacToe({
+        isSecondPlayerAI: this.isSecondPlayerAI,
+        difficulty: Difficulty.HARD,
+        AIMoveDelay: AI_MOVE_DELAY_MS,
+      });
+      this.isInitialized = true;
+    },
     onNext() {
       this.onFadeout(() => {
         this.game.resetGame();
@@ -87,6 +105,11 @@ export default {
         ? `${difficultyRef?.scrollHeight}px` || "0px"
         : "0px";
     },
+    // TODO:
+    // settingsHeight() {
+    //   const settingsRef = this.$refs.settings as HTMLDivElement;
+    //   return this.isInitialized ? `${settingsRef?.scrollHeight}px` : "0px";
+    // },
     nextText() {
       if (this.isSecondPlayerAI) {
         return this.game.move.player === Player.ONE
@@ -110,6 +133,19 @@ export default {
 <template>
   <div class="tic-tac-toe">
     <div class="tic-tac-toe__board board">
+      <VOverlay v-show="!isInitialized">
+        <div class="board__init-settings init-settings">
+          <div class="init-settings__icon-wrapper">
+            <IconX class="init-settings__icon" />
+            <IconO class="init-settings__icon" />
+          </div>
+          <h3 class="init-settings__heading">Play:</h3>
+          <div class="init-settings__buttons">
+            <VButton @onClick="onInit(true)">AI</VButton>
+            <VButton @onClick="onInit(false)">Human</VButton>
+          </div>
+        </div>
+      </VOverlay>
       <WinnerOverlay
         v-if="!!game.winner"
         :winner="game.winner"
@@ -132,41 +168,50 @@ export default {
         @makeMove="game.makeMove(index)"
       />
     </div>
-    <div class="tic-tac-toe__settings settings">
-      <div class="settings__section">
-        <h3 class="settings__heading">Next:</h3>
-        <p
+    <div
+      class="tic-tac-toe__settings settings"
+      ref="settings"
+      :style="{
+        // height: settingsHeight,
+        ...(isInitialized ? {} : { padding: 0, width: 0, height: 0 }),
+      }"
+    >
+      <div class="settings__wrapper">
+        <div class="settings__section">
+          <h3 class="settings__heading">Next:</h3>
+          <p
+            :style="{
+              color: `var(--color-${game.move.player})`,
+              opacity: !game.winner ? opacity : 0,
+            }"
+          >
+            {{ nextText }}
+          </p>
+        </div>
+        <div class="settings__section">
+          <h3 class="settings__heading">Play with:</h3>
+          <VSwitcher v-model="isSecondPlayerAI">
+            <template #buttonLeft>Human</template>
+            <template #buttonRight>AI</template>
+          </VSwitcher>
+        </div>
+        <div
+          class="settings__section"
+          ref="difficulty"
           :style="{
-            color: `var(--color-${game.move.player})`,
-            opacity: !game.winner ? opacity : 0,
+            height: difficultyHeight,
           }"
         >
-          {{ nextText }}
-        </p>
-      </div>
-      <div class="settings__section">
-        <h3 class="settings__heading">Play with:</h3>
-        <VSwitcher v-model="isSecondPlayerAI">
-          <template #buttonLeft>Human</template>
-          <template #buttonRight>AI</template>
-        </VSwitcher>
-      </div>
-      <div
-        class="settings__section"
-        ref="difficulty"
-        :style="{
-          height: difficultyHeight,
-        }"
-      >
-        <h3 class="settings__heading">Difficulty:</h3>
-        <div v-for="diff in Difficulty" :key="diff">
-          <VRadio
-            :id="diff"
-            :value="diff"
-            :label="toFirstLetterUpperCase(diff)"
-            name="difficulty"
-            v-model="difficulty"
-          />
+          <h3 class="settings__heading">Difficulty:</h3>
+          <div v-for="diff in Difficulty" :key="diff">
+            <VRadio
+              :id="diff"
+              :value="diff"
+              :label="toFirstLetterUpperCase(diff)"
+              name="difficulty"
+              v-model="difficulty"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -231,18 +276,58 @@ export default {
     border-left-style: solid;
     border-right-style: solid;
   }
+
+  &__init-settings {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 .tic-tac-toe__settings {
   justify-self: start;
   margin-top: calc(var(--grid-step) * 5);
-  flex-grow: 1;
-  max-width: calc(var(--grid-step) * 105 + 4px);
-  width: 100%;
 
   @media (min-width: 768px) {
-    max-width: calc(var(--grid-step) * 50);
+    transition: width 200ms ease-out, padding-left 200ms ease-out;
+    width: calc(var(--grid-step) * 50);
     margin-top: 0;
     margin-left: calc(var(--grid-step) * 5);
+  }
+
+  @media (max-width: 767px) {
+    transition: height 200ms ease-out;
+  }
+}
+
+.init-settings {
+  &__icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+
+    margin-bottom: calc(var(--grid-step) * 8);
+  }
+
+  &__icon {
+    width: 15%;
+    max-width: 75px;
+  }
+
+  &__heading {
+    margin-bottom: calc(var(--grid-step) * 4);
+  }
+
+  &__buttons {
+    display: flex;
+  }
+
+  &__buttons > {
+    *:not(:last-child) {
+      margin-right: calc(var(--grid-step) * 4);
+    }
   }
 }
 
@@ -250,6 +335,7 @@ export default {
   border-radius: calc(var(--grid-step) * 5);
   background-color: var(--color-bg);
   padding: calc(var(--grid-step) * 5);
+  overflow: hidden;
 
   &__section {
     overflow: hidden;
@@ -262,6 +348,17 @@ export default {
 
   &__heading {
     margin-bottom: calc(var(--grid-step) * 2);
+  }
+
+  @media (max-width: 767px) {
+    width: 100%;
+    max-width: calc(var(--grid-step) * 105);
+  }
+
+  @media (min-width: 768px) {
+    &__wrapper {
+      width: calc(var(--grid-step) * 50);
+    }
   }
 }
 </style>
