@@ -5,25 +5,29 @@ export default {
   },
   data() {
     return {
-      opacity: 0,
+      opacity: this.isOpen ? 1 : 0,
+      isVisible: this.isOpen,
     };
   },
-  methods: {
-    onNext() {
-      this.opacity = 0;
-      this.$emit("onNext");
+  watch: {
+    isOpen(newVal) {
+      this.opacity = newVal ? 1 : 0;
+      setTimeout(() => {
+        this.isVisible = newVal;
+      }, 200);
     },
-  },
-  mounted() {
-    setTimeout(() => {
-      this.opacity = 1;
-    }, 200);
   },
 };
 </script>
 
 <template>
-  <div class="overlay" :style="{ opacity }">
+  <div
+    v-if="isVisible"
+    class="overlay"
+    :style="{
+      opacity,
+    }"
+  >
     <div class="overlay__content"><slot /></div>
   </div>
 </template>

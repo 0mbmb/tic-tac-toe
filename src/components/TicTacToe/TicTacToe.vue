@@ -133,7 +133,7 @@ export default {
 <template>
   <div class="tic-tac-toe">
     <div class="tic-tac-toe__board board">
-      <VOverlay v-show="!isInitialized">
+      <VOverlay :is-open="!isInitialized">
         <div class="board__init-settings init-settings">
           <div class="init-settings__icon-wrapper">
             <IconX class="init-settings__icon" />
