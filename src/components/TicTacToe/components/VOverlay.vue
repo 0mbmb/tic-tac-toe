@@ -1,12 +1,13 @@
 <script lang="ts">
 export default {
   props: {
-    isOpen: { type: Boolean },
+    isOpen: { type: Boolean, required: true },
+    isPreopened: { type: Boolean, required: false },
   },
   data() {
     return {
-      opacity: this.isOpen ? 1 : 0,
-      isVisible: this.isOpen,
+      opacity: this.isPreopened ? 1 : 0,
+      isVisible: this.isPreopened ? true : false,
     };
   },
   watch: {
@@ -16,6 +17,12 @@ export default {
         this.isVisible = newVal;
       }, 200);
     },
+  },
+  mounted() {
+    this.isVisible = this.isOpen;
+    setTimeout(() => {
+      this.opacity = this.isOpen ? 1 : 0;
+    }, 0);
   },
 };
 </script>
