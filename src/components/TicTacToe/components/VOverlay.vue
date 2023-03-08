@@ -12,17 +12,18 @@ export default {
   },
   watch: {
     isOpen(newVal) {
-      this.opacity = newVal ? 1 : 0;
-      setTimeout(() => {
-        this.isVisible = newVal;
-      }, 200);
+      if (newVal) {
+        this.isVisible = true;
+        setTimeout(() => {
+          this.opacity = 1;
+        }, 0);
+      } else {
+        this.opacity = 0;
+        setTimeout(() => {
+          this.isVisible = false;
+        }, 200);
+      }
     },
-  },
-  mounted() {
-    this.isVisible = this.isOpen;
-    setTimeout(() => {
-      this.opacity = this.isOpen ? 1 : 0;
-    }, 0);
   },
 };
 </script>
