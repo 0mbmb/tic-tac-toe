@@ -178,14 +178,16 @@ export default {
     >
       <div class="settings__wrapper">
         <div class="settings__section">
-          <h3 class="settings__heading">Next:</h3>
-          <p
-            :style="{
-              color: `var(--color-${game.move.player})`,
-              opacity: !game.winner ? opacity : 0,
-            }"
-          >
-            {{ nextText }}
+          <p>
+            Next:
+            <span
+              :style="{
+                color: `var(--color-${game.move.player})`,
+                opacity: !game.winner ? opacity : 0,
+              }"
+            >
+              {{ nextText }}
+            </span>
           </p>
         </div>
         <div class="settings__section">
