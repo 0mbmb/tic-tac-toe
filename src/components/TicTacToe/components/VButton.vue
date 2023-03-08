@@ -22,5 +22,10 @@ export default {
   border: none;
   cursor: pointer;
   font-weight: inherit;
+  background-color: var(--color-button);
+  transition: background-color 200ms ease;
+  &:hover {
+    background-color: var(--color-button-hover);
+  }
 }
 </style>
