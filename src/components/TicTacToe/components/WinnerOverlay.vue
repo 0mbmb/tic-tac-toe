@@ -2,6 +2,8 @@
 import type { PropType } from "vue";
 import IconX from "../icons/IconX.vue";
 import IconO from "../icons/IconO.vue";
+import VOverlay from "./VOverlay.vue";
+import VButton from "./VButton.vue";
 import { Winner } from "../types";
 
 interface IWinner {
@@ -16,24 +18,20 @@ export default {
     };
   },
   props: {
-    winner: { type: Object as PropType<IWinner>, required: true },
-  },
-  data() {
-    return {
-      opacity: 0,
-    };
+    winner: { type: Object as PropType<IWinner | null> },
   },
   components: {
     IconX,
     IconO,
+    VOverlay,
+    VButton,
   },
   methods: {
     onNext() {
-      this.opacity = 0;
       this.$emit("onNext");
     },
     onEscKeydown(e: KeyboardEvent) {
-      if (e.key === "Escape") this.onNext();
+      if (e.key === "Escape" && this.winner) this.onNext();
     },
   },
   created() {
@@ -42,55 +40,51 @@ export default {
   beforeUnmount() {
     window.removeEventListener("keydown", this.onEscKeydown);
   },
-  mounted() {
-    const onNextButton = this.$refs.onNextButton as HTMLButtonElement;
-    if (onNextButton) onNextButton.focus();
-    setTimeout(() => {
-      this.opacity = 1;
-    }, 200);
+  watch: {
+    winner(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          const onNextButton = this.$refs.onNextButton as any;
+          if (onNextButton) onNextButton.$el.focus();
+        });
+      }
+    },
   },
 };
 </script>
 
 <template>
-  <div class="overlay" :style="{ opacity }">
-    <div class="overlay__icon-wrapper">
-      <IconX
-        v-if="winner.mark === Winner.X || winner.player === Winner.DRAW"
-        class="overlay__icon"
-      />
-      <IconO
-        v-if="winner.mark === Winner.O || winner.player === Winner.DRAW"
-        class="overlay__icon"
-      />
+  <VOverlay :is-open="!!winner" :open-delay="300">
+    <div class="winner-overlay__content" v-if="!!winner">
+      <div class="winner-overlay__icon-wrapper">
+        <IconX
+          v-if="winner.mark === Winner.X || winner.player === Winner.DRAW"
+          class="winner-overlay__icon"
+        />
+        <IconO
+          v-if="winner.mark === Winner.O || winner.player === Winner.DRAW"
+          class="winner-overlay__icon"
+        />
+      </div>
+      <span class="winner-overlay__message">{{
+        winner.player === Winner.DRAW ? "DRAW" : "WINS"
+      }}</span>
+      <div class="winner-overlay__button-wrapper">
+        <VButton @onClick="onNext" ref="onNextButton"> Next </VButton>
+      </div>
     </div>
-    <span class="overlay__message">{{
-      winner.player === Winner.DRAW ? "DRAW" : "WINS"
-    }}</span>
-    <button class="overlay__button button" @click="onNext" ref="onNextButton">
-      Next
-    </button>
-  </div>
+  </VOverlay>
 </template>
 
 <style scoped lang="scss">
-.overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
-
-  transition: opacity 200ms ease;
-
-  background-color: var(--color-bg-overlay);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-
-  color: var(--color-text-overlay);
+.winner-overlay {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    height: 100%;
+  }
 
   &__icon-wrapper {
     display: flex;
@@ -108,18 +102,9 @@ export default {
     font-size: 2rem;
   }
 
-  &__button {
+  &__button-wrapper {
     align-self: center;
     margin-top: calc(var(--grid-step) * 7);
   }
-}
-
-.button {
-  padding: calc(var(--grid-step) * 2) calc(var(--grid-step) * 10);
-  font-size: 1.1rem;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: inherit;
 }
 </style>

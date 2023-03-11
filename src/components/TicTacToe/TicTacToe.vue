@@ -82,9 +82,8 @@ export default {
       this.isInitialized = true;
     },
     onNext() {
-      this.onFadeout(() => {
-        this.game.resetGame();
-      });
+      this.onFadeout();
+      this.game.resetGame();
     },
     onKeyDown(e: KeyboardEvent) {
       this.game.onKeyDown(e);
@@ -146,11 +145,7 @@ export default {
           </div>
         </div>
       </VOverlay>
-      <WinnerOverlay
-        v-if="!!game.winner"
-        :winner="game.winner"
-        @onNext="onNext()"
-      />
+      <WinnerOverlay :winner="game.winner" @onNext="onNext()" />
       <CrossLine
         v-if="!!game.winner && game.winner.player !== Winner.DRAW"
         :position="game.crossLinePosition"
