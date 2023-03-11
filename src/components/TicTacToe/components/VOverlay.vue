@@ -3,6 +3,7 @@ export default {
   props: {
     isOpen: { type: Boolean, required: true },
     isPreopened: { type: Boolean, required: false },
+    openDelay: { type: Number, required: false },
   },
   data() {
     return {
@@ -16,7 +17,7 @@ export default {
         this.isVisible = true;
         setTimeout(() => {
           this.opacity = 1;
-        }, 0);
+        }, this.openDelay || 0);
       } else {
         this.opacity = 0;
         setTimeout(() => {
