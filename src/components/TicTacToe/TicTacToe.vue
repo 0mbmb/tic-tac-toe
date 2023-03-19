@@ -112,11 +112,6 @@ export default {
         ? `${difficultyRef?.scrollHeight}px` || "0px"
         : "0px";
     },
-    // TODO:
-    // settingsHeight() {
-    //   const settingsRef = this.$refs.settings as HTMLDivElement;
-    //   return this.isInitialized ? `${settingsRef?.scrollHeight}px` : "0px";
-    // },
     nextText() {
       if (this.isSecondPlayerAI) {
         return this.game.move.player === Player.ONE
@@ -175,7 +170,6 @@ export default {
       class="tic-tac-toe__settings settings"
       ref="settings"
       :style="{
-        // height: settingsHeight,
         ...(isInitialized ? {} : { padding: 0, width: 0, height: 0 }),
       }"
     >
