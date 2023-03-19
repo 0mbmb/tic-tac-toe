@@ -111,6 +111,7 @@ export default {
 
   &__icon {
     max-width: 382px;
+    width: 100%;
 
     path {
       animation: anim-path 0.2s ease forwards;
@@ -118,14 +119,14 @@ export default {
 
     &--horiz {
       path {
-        stroke-dasharray: 362px;
+        stroke-dasharray: 362px 362px;
         stroke-dashoffset: -362px;
       }
     }
 
     &--diag {
       path {
-        stroke-dasharray: 510px;
+        stroke-dasharray: 510px 510px;
         stroke-dashoffset: -510px;
       }
     }

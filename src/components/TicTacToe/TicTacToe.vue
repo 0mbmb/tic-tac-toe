@@ -252,6 +252,7 @@ export default {
   position: relative;
   border-radius: calc(var(--grid-step) * 5);
   background-color: var(--color-bg);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 
   &::before,
   &::after {
