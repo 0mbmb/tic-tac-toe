@@ -68,11 +68,14 @@ export default class TicTacToe {
     this.isSecondPlayerAI = isSecondPlayerAI;
     this.difficulty = difficulty;
     this.AIMoveDelay = AIMoveDelay;
-    this.isAIMove = false;
+    this.isAIMove = this.isSecondPlayerAI && this.move.player === Player.TWO;
+  }
 
+  startGame() {
     if (this.isSecondPlayerAI && this.move.player === Player.TWO) {
       this.makeMoveAI();
     }
+    this.isAIMove = false;
   }
 
   get emptyCellIndexes() {
@@ -185,10 +188,6 @@ export default class TicTacToe {
       player: this.otherPlayer(this.firstPlayer),
     };
     this.firstPlayer = this.otherPlayer(this.firstPlayer);
-
-    if (this.isSecondPlayerAI && this.move.player === Player.TWO) {
-      this.makeMoveAI();
-    }
   }
 
   makeMoveAI() {

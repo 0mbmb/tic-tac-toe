@@ -17,6 +17,7 @@ import "./base.css";
 import { Winner, Difficulty, Player } from "./types";
 
 const AI_MOVE_DELAY_MS = 200;
+const AI_INIT_MOVE_DELAY_MS = 500;
 
 export default {
   components: {
@@ -59,6 +60,7 @@ export default {
           difficulty: this.difficulty,
           AIMoveDelay: AI_MOVE_DELAY_MS,
         });
+        this.game.startGame();
       });
     },
     difficulty(newVal: Difficulty) {
@@ -68,6 +70,7 @@ export default {
           difficulty: newVal,
           AIMoveDelay: AI_MOVE_DELAY_MS,
         });
+        this.game.startGame();
       });
     },
   },
@@ -80,10 +83,15 @@ export default {
         AIMoveDelay: AI_MOVE_DELAY_MS,
       });
       this.isInitialized = true;
+      setTimeout(() => {
+        this.game.startGame();
+      }, AI_INIT_MOVE_DELAY_MS);
     },
     onNext() {
-      this.onFadeout();
       this.game.resetGame();
+      setTimeout(() => {
+        this.game.startGame();
+      }, AI_MOVE_DELAY_MS);
     },
     onKeyDown(e: KeyboardEvent) {
       this.game.onKeyDown(e);
