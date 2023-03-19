@@ -92,13 +92,17 @@ export default {
   background-color: var(--color-board);
   transition: opacity 200ms ease;
 
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
   &:disabled {
     cursor: not-allowed;
   }
 
-  &:hover {
-    .board__icon--ghost {
-      opacity: 0.1;
+  @media (hover: hover) {
+    &:hover {
+      .board__icon--ghost {
+        opacity: 0.1;
+      }
     }
   }
 }
